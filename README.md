@@ -16,9 +16,10 @@ graduation project at Princess Nourah Bint Abdulrahman University.
 | Training set | 18,016 images |
 | Validation set | 1,588 images |
 | Test set | 1,596 images |
-| Classes | COVID-19, lung opacity, normal cases, and viral pneumonia |
+| Classes | COVID · Lung Opacity · Normal · Viral Pneumonia |
 
-Selected among the top posters at **She Codes 2024** and showcased at **TEDxPNU**.
+Selected among the top posters at **She Codes 2024** and showcased at **TEDxPNU** —
+see the [conference poster](poster.jpg).
 
 ## Approach
 
@@ -41,6 +42,10 @@ the anatomy. Grad-CAM heatmaps were generated to verify attention falls on lung 
 rather than on scanner artifacts, text overlays, or borders — a documented failure mode
 in medical imaging, where models have achieved strong benchmark numbers by learning
 which hospital's equipment produced the scan.
+
+**A working interface.** The trained model is wrapped in an application that accepts
+an uploaded image, validates its format, and returns a prediction or an explicit
+"inconclusive" result rather than a silent failure.
 
 **Input gating.** A softmax classifier returns a confident distribution over its four
 classes for *any* input, including images that aren't X-rays at all. A separate gate
@@ -65,13 +70,16 @@ pip install -r requirements.txt
 ```
 
 Open the notebook and run the cells in order. The dataset is not included in this
-repository — see https://www.kaggle.com/datasets/reemaalfaleh/detection-diseases?select=Detection+Data+2.
+repository. It is the COVID-19 Radiography Dataset, downloaded from Kaggle at the
+start of the notebook. Set `KAGGLE_USERNAME` and `KAGGLE_KEY` as environment variables
+before running — do not hardcode them.
 
 ## My role
 
 Team graduation project. I led model training, evaluation, and documentation.
 
-Team: Razan Alsunaidi, Hssah Alsherihi, and Reema Alfaleh 
+Team: Razan Alsunaidi, Hssah Alsherihi, Reema Alfaleh, Noura Alqasim
+Supervisor: Dr. Hanan Adlan, Princess Nourah Bint Abdulrahman University
 
 ## Stack
 
