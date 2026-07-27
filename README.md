@@ -1,2 +1,79 @@
-# xray-diagnosis
-4-class chest X-ray classifier (Xception transfer learning, TensorFlow) reaching 97.2% accuracy and 0.97 macro-F1 — engineered with MD5 deduplication to prevent data leakage, Grad-CAM explainability, and an input-gating model.
+# XrayDiagnosis — 4-Class Chest X-ray Classification
+
+A deep learning classifier that sorts chest X-ray images into four classes, built as a
+graduation project at Princess Nourah Bint Abdulrahman University.
+
+**97.2% test accuracy · 0.97 macro-F1** on a held-out set of 1,596 images.
+
+![Grad-CAM](screenshot.png)
+
+## Results
+
+| Metric | Value |
+|---|---|
+| Test accuracy | 97.2% |
+| Macro-F1 | 0.97 |
+| Training set | 18,016 images |
+| Validation set | 1,588 images |
+| Test set | 1,596 images |
+| Classes | COVID-19, lung opacity, normal cases, and viral pneumonia |
+
+Selected among the top posters at **She Codes 2024** and showcased at **TEDxPNU**.
+
+## Approach
+
+**Model** — transfer learning with Xception (ImageNet weights) in TensorFlow/Keras,
+fine-tuned on the X-ray dataset, with a baseline CNN for comparison.
+
+**Data integrity before modeling.** Duplicate images across splits are the quiet way a
+medical classifier reports accuracy it hasn't earned: the same image appearing in both
+training and test turns memorization into a test score. Every file was hashed with MD5
+and deduplicated before splitting, and the classes were balanced so accuracy couldn't
+be inflated by a dominant class.
+
+**Metrics chosen for the problem.** Accuracy alone hides weak classes in a multi-class
+setting, so macro-F1 was tracked alongside it — it weights every class equally, meaning
+one poorly-learned condition can't be masked by three strong ones. Confusion-matrix
+error analysis guided each round of improvement rather than blind hyperparameter tuning.
+
+**Explainability (Grad-CAM).** A high score doesn't establish that a model is reading
+the anatomy. Grad-CAM heatmaps were generated to verify attention falls on lung fields
+rather than on scanner artifacts, text overlays, or borders — a documented failure mode
+in medical imaging, where models have achieved strong benchmark numbers by learning
+which hospital's equipment produced the scan.
+
+**Input gating.** A softmax classifier returns a confident distribution over its four
+classes for *any* input, including images that aren't X-rays at all. A separate gate
+model runs first and rejects out-of-distribution inputs, so the system declines instead
+of diagnosing a photograph.
+
+## Known limitations
+
+- **No external validation.** Performance is measured on a held-out split of the same
+  dataset. Accuracy on images from different hospitals, scanners, or populations is
+  unknown, and distribution shift is the usual reason medical models underperform in
+  deployment.
+- **Not deployed, and not a diagnostic tool.** This is a research and educational
+  project; it is not validated for clinical use.
+- **The gate model is a safeguard, not a guarantee** — it rejects clearly unrelated
+  images, but was not adversarially tested.
+
+## Running it
+
+```bash
+pip install -r requirements.txt
+```
+
+Open the notebook and run the cells in order. The dataset is not included in this
+repository — see https://www.kaggle.com/datasets/reemaalfaleh/detection-diseases?select=Detection+Data+2.
+
+## My role
+
+Team graduation project. I led model training, evaluation, and documentation.
+
+Team: Razan Alsunaidi, Hssah Alsherihi, and Reema Alfaleh 
+
+## Stack
+
+Python · TensorFlow / Keras · Xception (transfer learning) · scikit-learn · NumPy ·
+Matplotlib · Grad-CAM
