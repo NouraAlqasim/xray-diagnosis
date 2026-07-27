@@ -5,7 +5,7 @@ graduation project at Princess Nourah Bint Abdulrahman University.
 
 **97.2% test accuracy · 0.97 macro-F1** on a held-out set of 1,596 images.
 
-![Grad-CAM](screenshot.png)
+![Confusion matrix and classification report](screenshot.png)
 
 ## Results
 
@@ -20,6 +20,29 @@ graduation project at Princess Nourah Bint Abdulrahman University.
 
 Selected among the top posters at **She Codes 2024** and showcased at **TEDxPNU** —
 see the [conference poster](poster.jpg).
+
+## Where the model actually fails
+
+Per-class results on the test set (399 images per class):
+
+| Class | Precision | Recall | F1 |
+|---|---|---|---|
+| COVID | 1.00 | 0.98 | 0.99 |
+| Lung Opacity | 0.97 | 0.94 | 0.96 |
+| Normal | 0.93 | 0.97 | 0.95 |
+| Viral Pneumonia | 0.99 | 1.00 | 0.99 |
+
+The errors are not spread evenly. Almost all of them sit on a single boundary:
+**23 Lung Opacity images were classified as Normal**, and 9 Normal images as Lung
+Opacity. Every other off-diagonal cell is in the single digits or zero.
+
+That asymmetry matters more than the headline accuracy. A Lung Opacity case read as
+Normal is a false negative — an abnormal scan reported as clean — which is the failure
+direction with real consequences in a screening context. Viral Pneumonia and COVID, by
+contrast, are near-perfectly separated, with COVID precision at 1.00.
+
+This is also where a single accuracy number would have hidden the problem: 97% looks
+uniform until the confusion matrix shows one class carrying most of the error.
 
 ## Approach
 
@@ -62,6 +85,13 @@ of diagnosing a photograph.
   project; it is not validated for clinical use.
 - **The gate model is a safeguard, not a guarantee** — it rejects clearly unrelated
   images, but was not adversarially tested.
+
+## The application
+
+![Detection interface](app.png)
+
+The trained model is wrapped in a web interface: the user uploads an X-ray, the gate
+model validates it, and the classifier returns the predicted class.
 
 ## Running it
 
